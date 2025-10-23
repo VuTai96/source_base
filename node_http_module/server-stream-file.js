@@ -19,6 +19,7 @@ const server = http.createServer((req, res) => {
                 res.end('Server error');
                 return;
             }
+            console.time('FileTransfer');
             res.setHeader('Content-length', stats.size);
             res.setHeader('Content-Type', 'application/octet-stream');
             const stream = fs.createReadStream(filePath);
@@ -28,6 +29,9 @@ const server = http.createServer((req, res) => {
                     res.statusCode = 500;
                     res.end('Error reading file');
                 }
+            });
+            stream.on('end', () => {
+                console.timeEnd('FileTransfer');
             });
             stream.pipe(res);
         });
