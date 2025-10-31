@@ -15,22 +15,21 @@ server.keepAliveTimeout = 5000; // socket rảnh > 5s thì đóng
 // theo dõi các socket đang dữ
 socketSet = new Set();
 server.on('connection', (socket) => {
-    console.log(`socket: ${socket}
+    socketSet.add(socket);
+    console.log(`total connections: ${socketSet.size}
+        New connection from ${socket.remotePort}
             -- remoteAddress: ${socket.remoteAddress}
             -- remotePort: ${socket.remotePort}
             -- bytesRead: ${socket.bytesRead}
             -- bytesWritten: ${socket.bytesWritten}
-
         `);
-    socketSet.add(socket);
-    console.log(`New connection from ${socket.remotePort},
-        total connections: ${socketSet.size}`);
 
     socket.setTimeout(10000);
     socket.on('timeout', () => {
         console.log(`Socket from ${socket.remotePort} timed out`);
         socket.destroy();
     });
+
     socket.on('close', () => {
         socketSet.delete(socket);
         console.log(`Connection from ${socket.remotePort} closed,
