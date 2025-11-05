@@ -13,7 +13,7 @@ server.on('stream', (stream, headers) => {
     const method = headers[':method'];
     const urlPath = headers[':path'];
 
-    console.log(`➡️  ${method} ${path}`);
+    console.log(`➡️  ${method} ${urlPath}`);
 
     if (method === 'GET' && urlPath === '/') {
         stream.respond({
