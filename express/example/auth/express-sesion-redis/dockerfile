@@ -1,0 +1,18 @@
+# Base image
+FROM node:18
+
+# Tạo thư mục làm việc
+WORKDIR /usr/src/app
+
+# Copy file package và cài đặt
+COPY package*.json ./
+RUN npm install
+
+# Copy toàn bộ mã nguồn
+COPY . .
+
+# Mở cổng
+EXPOSE 3000
+
+# Chạy ứng dụng
+CMD ["npm", "start"]
