@@ -71,18 +71,25 @@ app.get('/logout', (req, res) => {
 });
 
 // (GET) Delete all session in Redis
-app.get('/delete', async (req, res) => {
-    try {
-        const keys = await redisClient.keys('sess:*');
-        if (keys.length === 0) {
-            return res.send('No session');
+app.get('/delete', (req, res) => {
+    redisClient.keys('sess:*', async (err, keys) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Lỗi khi lấy danh sách session');
         }
-        await Promise.all(keys.map((key) => redisClient.del(key)));
-        res.send(`Deleted ${keys.length} session`);
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Has error when delete session');
-    }
+
+        if (!keys || keys.length === 0) {
+            return res.send('Không có session nào để xóa.');
+        }
+
+        try {
+            await Promise.all(keys.map((key) => redisClient.del(key)));
+            res.send(`Đã xóa ${keys.length} session.`);
+        } catch (delErr) {
+            console.error(delErr);
+            res.status(500).send('Lỗi khi xóa session.');
+        }
+    });
 });
 
 app.listen(3000, () => {
